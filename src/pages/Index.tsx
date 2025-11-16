@@ -5,6 +5,7 @@ import { OrderQueue } from '@/components/OrderQueue';
 import { ActiveOrders } from '@/components/ActiveOrders';
 import { CompletedOrders } from '@/components/CompletedOrders';
 import { Statistics } from '@/components/Statistics';
+import { TimelineVisualization } from '@/components/TimelineVisualization';
 import { Button } from '@/components/ui/button';
 import { 
   scheduleNextOrder, 
@@ -174,6 +175,9 @@ const Index = () => {
           <ActiveOrders orders={cookingOrders} />
           <CompletedOrders orders={completedOrders} />
         </div>
+
+        {/* Timeline Visualization */}
+        <TimelineVisualization orders={orders} />
       </main>
     </div>
   );
