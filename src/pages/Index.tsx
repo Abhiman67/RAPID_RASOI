@@ -6,6 +6,7 @@ import { ActiveOrders } from '@/components/ActiveOrders';
 import { CompletedOrders } from '@/components/CompletedOrders';
 import { Statistics } from '@/components/Statistics';
 import { TimelineVisualization } from '@/components/TimelineVisualization';
+import { AlgorithmExplanation } from '@/components/AlgorithmExplanation';
 import { Button } from '@/components/ui/button';
 import { 
   scheduleNextOrder, 
@@ -163,6 +164,9 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8 space-y-6">
         {/* Statistics */}
         <Statistics statistics={statistics} />
+
+        {/* Algorithm Explanation */}
+        <AlgorithmExplanation orders={orders} />
 
         {/* Order Entry and Queue */}
         <div className="grid gap-6 lg:grid-cols-2">
