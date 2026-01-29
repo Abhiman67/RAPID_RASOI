@@ -1,7 +1,9 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "rapid-rasoi",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Rapid Rasoi - Restaurant Order Management using Non-Preemptive Priority Scheduling",
+  "author": "Abhiman67",
   "type": "module",
   "scripts": {
     "dev": "vite",
