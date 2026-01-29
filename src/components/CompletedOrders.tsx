@@ -15,12 +15,14 @@ export function CompletedOrders({ orders }: CompletedOrdersProps) {
     .slice(0, 10);
 
   return (
-    <Card>
+    <Card className="border-border/50 card-hover">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CheckCircle2 className="h-5 w-5 text-success" />
-          Completed Orders
-          <Badge variant="secondary" className="ml-auto bg-success/10 text-success border-success/20">
+          <div className="p-2 rounded-lg bg-green-500/20">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
+          </div>
+          <span>Completed Orders</span>
+          <Badge variant="secondary" className="ml-auto bg-green-500/10 text-green-500 border-green-500/20">
             {orders.length} completed
           </Badge>
         </CardTitle>
@@ -31,20 +33,26 @@ export function CompletedOrders({ orders }: CompletedOrdersProps) {
       <CardContent className="space-y-3">
         {recentOrders.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No completed orders yet
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p>No completed orders yet</p>
           </div>
         ) : (
           recentOrders.map((order) => (
             <div
               key={order.id}
-              className="p-3 rounded-lg border bg-success/5 border-success/20"
+              className="p-4 rounded-xl border border-green-500/30 bg-green-500/5"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{order.customerName}</span>
-                    <Badge variant={order.orderType === 'reservation' ? 'default' : 'secondary'}>
+                    <span className="font-semibold">{order.customerName}</span>
+                    <Badge 
+                      variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
+                      className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}
+                    >
                       {order.orderType}
                     </Badge>
                   </div>
@@ -56,13 +64,13 @@ export function CompletedOrders({ orders }: CompletedOrdersProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="flex items-center gap-1 text-muted-foreground">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-muted/50 text-muted-foreground">
                   <Clock className="h-3 w-3" />
-                  <span>Wait: {calculateWaitingTime(order).toFixed(1)}min</span>
+                  <span>Wait: <span className="text-foreground font-medium">{calculateWaitingTime(order).toFixed(1)}min</span></span>
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-muted/50 text-muted-foreground">
                   <Timer className="h-3 w-3" />
-                  <span>Total: {calculateTurnaroundTime(order).toFixed(1)}min</span>
+                  <span>Total: <span className="text-foreground font-medium">{calculateTurnaroundTime(order).toFixed(1)}min</span></span>
                 </div>
               </div>
             </div>

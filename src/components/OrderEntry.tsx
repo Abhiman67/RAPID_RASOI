@@ -63,11 +63,13 @@ export function OrderEntry({ onAddOrder }: OrderEntryProps) {
   };
 
   return (
-    <Card>
+    <Card className="border-border/50 card-hover">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <UtensilsCrossed className="h-5 w-5 text-primary" />
-          New Order Entry
+          <div className="p-2 rounded-lg bg-primary/20">
+            <UtensilsCrossed className="h-5 w-5 text-primary" />
+          </div>
+          <span>New Order Entry</span>
         </CardTitle>
         <CardDescription>
           Add walk-in or reservation orders to the queue
@@ -122,7 +124,7 @@ export function OrderEntry({ onAddOrder }: OrderEntryProps) {
 
             <Button
               onClick={() => handleSubmit('walk-in')}
-              className="w-full"
+              className="w-full glow-primary font-semibold"
               size="lg"
             >
               Add Walk-in Order
@@ -181,7 +183,7 @@ export function OrderEntry({ onAddOrder }: OrderEntryProps) {
 
             <Button
               onClick={() => handleSubmit('reservation')}
-              className="w-full"
+              className="w-full glow-primary font-semibold"
               size="lg"
             >
               Add Reservation Order

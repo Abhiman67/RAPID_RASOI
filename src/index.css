@@ -2,95 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Smriti AI-inspired design system. Dark theme only.
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 40 20% 97%;
-    --foreground: 25 25% 15%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 25 25% 15%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 25% 15%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 84 81% 44%;
+    --primary-foreground: 0 0% 2%;
 
-    --secondary: 40 30% 92%;
-    --secondary-foreground: 25 25% 15%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 40 20% 94%;
-    --muted-foreground: 25 10% 45%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 35 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 84 81% 44%;
+    --accent-foreground: 0 0% 2%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
     --warning: 45 93% 47%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 9%;
 
-    --border: 40 15% 88%;
-    --input: 40 15% 88%;
-    --ring: 25 95% 53%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 84 81% 44%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --chart-1: 25 95% 53%;
+    --chart-1: 84 81% 44%;
     --chart-2: 142 76% 36%;
     --chart-3: 45 93% 47%;
     --chart-4: 210 85% 58%;
-    --chart-5: 0 72% 51%;
-  }
-
-  .dark {
-    --background: 25 30% 8%;
-    --foreground: 40 20% 95%;
-
-    --card: 25 25% 12%;
-    --card-foreground: 40 20% 95%;
-
-    --popover: 25 25% 12%;
-    --popover-foreground: 40 20% 95%;
-
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 25 20% 18%;
-    --secondary-foreground: 40 20% 95%;
-
-    --muted: 25 20% 16%;
-    --muted-foreground: 40 10% 65%;
-
-    --accent: 35 100% 50%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 45 93% 47%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 25 20% 22%;
-    --input: 25 20% 22%;
-    --ring: 25 95% 53%;
-
-    --chart-1: 25 95% 53%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 45 93% 47%;
-    --chart-4: 210 85% 58%;
-    --chart-5: 0 72% 51%;
+    --chart-5: 0 84% 60%;
   }
 }
 
@@ -100,6 +58,43 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Custom utilities for glow effects */
+@layer utilities {
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(84 81% 44% / 0.15),
+                0 0 40px hsl(84 81% 44% / 0.1),
+                0 0 60px hsl(84 81% 44% / 0.05);
+  }
+
+  .glow-primary-intense {
+    box-shadow: 0 0 30px hsl(84 81% 44% / 0.25),
+                0 0 60px hsl(84 81% 44% / 0.15),
+                0 0 90px hsl(84 81% 44% / 0.1);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 20px hsl(142 76% 36% / 0.15),
+                0 0 40px hsl(142 76% 36% / 0.1);
+  }
+
+  .glow-warning {
+    box-shadow: 0 0 20px hsl(45 93% 47% / 0.15),
+                0 0 40px hsl(45 93% 47% / 0.1);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-green-400;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:border-primary/40 hover:glow-primary;
+  }
+
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl;
   }
 }

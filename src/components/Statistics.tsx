@@ -1,5 +1,5 @@
 import { Statistics as StatsType } from '@/types/order';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { BarChart3, Clock, TrendingUp, CheckCircle2 } from 'lucide-react';
 
 interface StatisticsProps {
@@ -13,52 +13,68 @@ export function Statistics({ statistics }: StatisticsProps) {
       value: statistics.totalOrders,
       icon: BarChart3,
       description: 'All orders received',
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
+      gradient: 'from-primary/20 to-primary/5',
+      iconBg: 'bg-primary/20',
+      iconColor: 'text-primary',
+      valueColor: 'text-primary',
+      glowClass: 'hover:glow-primary',
     },
     {
       title: 'Completed',
       value: statistics.completedOrders,
       icon: CheckCircle2,
       description: 'Successfully served',
-      color: 'text-success',
-      bgColor: 'bg-success/10',
+      gradient: 'from-green-500/20 to-green-500/5',
+      iconBg: 'bg-green-500/20',
+      iconColor: 'text-green-500',
+      valueColor: 'text-green-500',
+      glowClass: 'hover:glow-success',
     },
     {
       title: 'Avg Wait Time',
       value: `${statistics.averageWaitingTime.toFixed(1)}m`,
       icon: Clock,
       description: 'Time before cooking',
-      color: 'text-warning',
-      bgColor: 'bg-warning/10',
+      gradient: 'from-yellow-500/20 to-yellow-500/5',
+      iconBg: 'bg-yellow-500/20',
+      iconColor: 'text-yellow-500',
+      valueColor: 'text-yellow-500',
+      glowClass: 'hover:glow-warning',
     },
     {
       title: 'Avg Turnaround',
       value: `${statistics.averageTurnaroundTime.toFixed(1)}m`,
       icon: TrendingUp,
       description: 'Total time per order',
-      color: 'text-accent',
-      bgColor: 'bg-accent/10',
+      gradient: 'from-blue-500/20 to-blue-500/5',
+      iconBg: 'bg-blue-500/20',
+      iconColor: 'text-blue-500',
+      valueColor: 'text-blue-500',
+      glowClass: '',
     },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => (
-        <Card key={index}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {stat.title}
-            </CardTitle>
-            <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+        <Card 
+          key={index} 
+          className={`relative overflow-hidden border-border/50 transition-all duration-300 ${stat.glowClass} hover:border-primary/30`}
+        >
+          <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`} />
+          <CardContent className="relative pt-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className={`p-3 rounded-xl ${stat.iconBg}`}>
+                <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-bold ${stat.color}`}>
+            <div className={`text-3xl font-bold ${stat.valueColor} mb-1`}>
               {stat.value}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-sm font-medium text-foreground mb-0.5">
+              {stat.title}
+            </div>
+            <p className="text-xs text-muted-foreground">
               {stat.description}
             </p>
           </CardContent>

@@ -12,12 +12,14 @@ export function OrderQueue({ orders }: OrderQueueProps) {
   const sortedOrders = [...orders].sort((a, b) => b.priority - a.priority);
 
   return (
-    <Card>
+    <Card className="border-border/50 card-hover">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
-          Priority Queue
-          <Badge variant="secondary" className="ml-auto">
+          <div className="p-2 rounded-lg bg-primary/20">
+            <TrendingUp className="h-5 w-5 text-primary" />
+          </div>
+          <span>Priority Queue</span>
+          <Badge variant="secondary" className="ml-auto bg-primary/10 text-primary border-primary/20">
             {orders.length} waiting
           </Badge>
         </CardTitle>
@@ -28,38 +30,44 @@ export function OrderQueue({ orders }: OrderQueueProps) {
       <CardContent className="space-y-3">
         {sortedOrders.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No orders in queue
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+              <TrendingUp className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p>No orders in queue</p>
           </div>
         ) : (
           sortedOrders.map((order, index) => (
             <div
               key={order.id}
-              className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+              className="flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
-                {index + 1}
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/20 text-primary font-bold text-sm">
+                #{index + 1}
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium truncate">{order.customerName}</span>
-                  <Badge variant={order.orderType === 'reservation' ? 'default' : 'secondary'}>
+                  <span className="font-semibold truncate">{order.customerName}</span>
+                  <Badge 
+                    variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
+                    className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}
+                  >
                     {order.orderType}
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{order.items}</p>
-                <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>Prep: {order.burstTime}min</span>
-                  <span>•</span>
+                  <span className="text-border">•</span>
                   <span>Waiting: {formatDistanceToNow(order.arrivalTime, { addSuffix: false })}</span>
                 </div>
               </div>
 
               <div className="text-right">
                 <div className="text-xs text-muted-foreground mb-1">Priority</div>
-                <div className="text-lg font-bold text-primary">
+                <div className="text-xl font-bold text-primary">
                   {order.priority.toFixed(2)}
                 </div>
               </div>

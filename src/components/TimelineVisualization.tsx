@@ -60,7 +60,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
     };
 
     // Draw time axis
-    ctx.strokeStyle = '#e5e7eb';
+    ctx.strokeStyle = '#404040';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(padding.left, padding.top);
@@ -68,7 +68,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
     ctx.stroke();
 
     // Draw time labels
-    ctx.fillStyle = '#6b7280';
+    ctx.fillStyle = '#a3a3a3';
     ctx.font = '11px Inter, system-ui, sans-serif';
     ctx.textAlign = 'center';
     
@@ -80,7 +80,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
       ctx.fillText(label, x, padding.top - 10);
       
       // Draw vertical grid line
-      ctx.strokeStyle = '#f3f4f6';
+      ctx.strokeStyle = '#2a2a2a';
       ctx.beginPath();
       ctx.moveTo(x, padding.top);
       ctx.lineTo(x, padding.top + chartHeight);
@@ -89,7 +89,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
 
     // Draw current time indicator
     const currentX = timeToX(now);
-    ctx.strokeStyle = '#f59e0b';
+    ctx.strokeStyle = '#84cc16';
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
@@ -103,7 +103,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
       const y = padding.top + index * rowHeight + rowHeight / 2;
 
       // Draw order label
-      ctx.fillStyle = '#1f2937';
+      ctx.fillStyle = '#f5f5f5';
       ctx.font = '12px Inter, system-ui, sans-serif';
       ctx.textAlign = 'right';
       const labelText = order.customerName.length > 18 
@@ -121,9 +121,9 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
         const waitEnd = timeToX(order.startTime || now);
         const waitWidth = waitEnd - waitStart;
 
-        ctx.fillStyle = hoveredOrder === order.id ? '#fbbf24' : '#fcd34d';
+        ctx.fillStyle = hoveredOrder === order.id ? '#ca8a04' : '#a16207';
         ctx.fillRect(waitStart, barY, waitWidth, barHeight);
-        ctx.strokeStyle = '#f59e0b';
+        ctx.strokeStyle = '#eab308';
         ctx.lineWidth = 1;
         ctx.strokeRect(waitStart, barY, waitWidth, barHeight);
       }
@@ -148,11 +148,11 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
         const cookWidth = cookEnd - cookStart;
 
         if (order.status === 'completed') {
-          ctx.fillStyle = hoveredOrder === order.id ? '#10b981' : '#34d399';
-          ctx.strokeStyle = '#059669';
+          ctx.fillStyle = hoveredOrder === order.id ? '#22c55e' : '#16a34a';
+          ctx.strokeStyle = '#4ade80';
         } else {
-          ctx.fillStyle = hoveredOrder === order.id ? '#f97316' : '#fb923c';
-          ctx.strokeStyle = '#ea580c';
+          ctx.fillStyle = hoveredOrder === order.id ? '#f97316' : '#ea580c';
+          ctx.strokeStyle = '#fb923c';
         }
         
         ctx.fillRect(cookStart, barY, cookWidth, barHeight);
@@ -165,7 +165,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
           const progress = Math.min(1, elapsed / order.burstTime);
           const progressWidth = cookWidth * progress;
 
-          ctx.fillStyle = 'rgba(234, 88, 12, 0.3)';
+          ctx.fillStyle = 'rgba(251, 146, 60, 0.4)';
           ctx.fillRect(cookStart, barY, progressWidth, barHeight);
         }
       }
@@ -176,25 +176,25 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
         const waitEnd = timeToX(now);
         const waitWidth = waitEnd - waitStart;
 
-        ctx.fillStyle = hoveredOrder === order.id ? '#93c5fd' : '#bfdbfe';
+        ctx.fillStyle = hoveredOrder === order.id ? '#84cc16' : '#65a30d';
         ctx.fillRect(waitStart, barY, waitWidth, barHeight);
-        ctx.strokeStyle = '#3b82f6';
+        ctx.strokeStyle = '#a3e635';
         ctx.lineWidth = 1;
         ctx.strokeRect(waitStart, barY, waitWidth, barHeight);
 
         // Pulsing effect for waiting
-        const pulseAlpha = 0.3 + 0.3 * Math.sin(Date.now() / 500);
-        ctx.fillStyle = `rgba(59, 130, 246, ${pulseAlpha})`;
+        const pulseAlpha = 0.2 + 0.2 * Math.sin(Date.now() / 500);
+        ctx.fillStyle = `rgba(132, 204, 22, ${pulseAlpha})`;
         ctx.fillRect(waitStart, barY, waitWidth, barHeight);
       }
 
       // Draw priority badge
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#1a1a1a';
       ctx.fillRect(padding.left - 45, y - 10, 35, 20);
-      ctx.strokeStyle = '#f59e0b';
+      ctx.strokeStyle = '#84cc16';
       ctx.lineWidth = 1;
       ctx.strokeRect(padding.left - 45, y - 10, 35, 20);
-      ctx.fillStyle = '#f59e0b';
+      ctx.fillStyle = '#84cc16';
       ctx.font = 'bold 10px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(order.priority.toFixed(1), padding.left - 27.5, y + 3);
@@ -203,10 +203,10 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
     // Legend
     const legendY = padding.top + chartHeight + 10;
     const legendItems = [
-      { color: '#bfdbfe', border: '#3b82f6', label: 'Waiting' },
-      { color: '#fcd34d', border: '#f59e0b', label: 'Waited' },
-      { color: '#fb923c', border: '#ea580c', label: 'Cooking' },
-      { color: '#34d399', border: '#059669', label: 'Completed' },
+      { color: '#65a30d', border: '#a3e635', label: 'Waiting' },
+      { color: '#a16207', border: '#eab308', label: 'Waited' },
+      { color: '#ea580c', border: '#fb923c', label: 'Cooking' },
+      { color: '#16a34a', border: '#4ade80', label: 'Completed' },
     ];
 
     let legendX = padding.left;
@@ -220,7 +220,7 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
       ctx.lineWidth = 1;
       ctx.strokeRect(legendX, legendY, 15, 15);
       
-      ctx.fillStyle = '#1f2937';
+      ctx.fillStyle = '#e5e5e5';
       ctx.fillText(item.label, legendX + 20, legendY + 11);
       legendX += 100;
     });
@@ -253,16 +253,21 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
 
   if (orders.length === 0) {
     return (
-      <Card>
+      <Card className="border-border/50 card-hover">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Timeline Visualization
+            <div className="p-2 rounded-lg bg-primary/20">
+              <Calendar className="h-5 w-5 text-primary" />
+            </div>
+            <span>Timeline Visualization</span>
           </CardTitle>
           <CardDescription>Gantt chart showing order lifecycle</CardDescription>
         </CardHeader>
         <CardContent className="text-center py-8 text-muted-foreground">
-          No orders to display
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+            <Calendar className="h-8 w-8 text-muted-foreground/50" />
+          </div>
+          <p>No orders to display</p>
         </CardContent>
       </Card>
     );
@@ -271,21 +276,23 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
   const canvasHeight = Math.max(orders.length * 40 + 100, 300);
 
   return (
-    <Card>
+    <Card className="border-border/50 card-hover">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              Timeline Visualization
-              <Badge variant="secondary">{orders.length} orders</Badge>
+              <div className="p-2 rounded-lg bg-primary/20">
+                <Calendar className="h-5 w-5 text-primary" />
+              </div>
+              <span>Timeline Visualization</span>
+              <Badge className="bg-primary/10 text-primary border-primary/20">{orders.length} orders</Badge>
             </CardTitle>
             <CardDescription>
               Gantt chart showing order lifecycle from arrival to completion
             </CardDescription>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4 text-warning" />
+            <Clock className="h-4 w-4 text-yellow-500" />
             <span>Current time indicator</span>
           </div>
         </div>
@@ -301,31 +308,31 @@ export function TimelineVisualization({ orders }: TimelineVisualizationProps) {
               height: canvasHeight,
               cursor: hoveredOrder ? 'pointer' : 'default'
             }}
-            className="border rounded-lg"
+            className="border border-border/50 rounded-xl bg-card"
           />
         </div>
         
         {hoveredOrder && (
-          <div className="mt-4 p-3 bg-muted/50 rounded-lg border">
+          <div className="mt-4 p-4 bg-muted/30 rounded-xl border border-border/50">
             {orders.find(o => o.id === hoveredOrder) && (() => {
               const order = orders.find(o => o.id === hoveredOrder)!;
               return (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Customer:</span>
-                    <div className="font-medium">{order.customerName}</div>
+                    <div className="font-semibold">{order.customerName}</div>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Status:</span>
-                    <div className="font-medium capitalize">{order.status}</div>
+                    <div className="font-semibold capitalize">{order.status}</div>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Priority:</span>
-                    <div className="font-medium text-primary">{order.priority.toFixed(2)}</div>
+                    <div className="font-semibold text-primary">{order.priority.toFixed(2)}</div>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Prep Time:</span>
-                    <div className="font-medium">{order.burstTime} min</div>
+                    <div className="font-semibold">{order.burstTime} min</div>
                   </div>
                 </div>
               );

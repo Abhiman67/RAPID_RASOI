@@ -35,12 +35,14 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
   };
 
   return (
-    <Card>
+    <Card className="border-border/50 card-hover">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <ChefHat className="h-5 w-5 text-warning" />
-          Active Orders
-          <Badge variant="secondary" className="ml-auto bg-warning/10 text-warning border-warning/20">
+          <div className="p-2 rounded-lg bg-yellow-500/20">
+            <ChefHat className="h-5 w-5 text-yellow-500" />
+          </div>
+          <span>Active Orders</span>
+          <Badge variant="secondary" className="ml-auto bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
             {orders.length} cooking
           </Badge>
         </CardTitle>
@@ -51,27 +53,33 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
       <CardContent className="space-y-4">
         {orders.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No orders being prepared
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+              <ChefHat className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p>No orders being prepared</p>
           </div>
         ) : (
           orders.map((order) => (
             <div
               key={order.id}
-              className="p-4 rounded-lg border bg-warning/5 border-warning/20 space-y-3"
+              className="p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 space-y-3 glow-warning"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span className="font-semibold">{order.customerName}</span>
-                    <Badge variant={order.orderType === 'reservation' ? 'default' : 'secondary'}>
+                    <Badge 
+                      variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
+                      className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}
+                    >
                       {order.orderType}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{order.items}</p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center gap-1 text-warning font-medium">
+                  <div className="flex items-center gap-1 text-yellow-500 font-bold text-lg">
                     <Clock className="h-4 w-4" />
                     {getRemainingTime(order)}
                   </div>
@@ -81,10 +89,10 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Cooking Progress</span>
-                  <span>{Math.round(calculateProgress(order))}%</span>
+                  <span className="text-yellow-500 font-medium">{Math.round(calculateProgress(order))}%</span>
                 </div>
                 <Progress value={calculateProgress(order)} className="h-2" />
               </div>
