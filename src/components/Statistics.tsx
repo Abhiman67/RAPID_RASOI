@@ -1,6 +1,6 @@
 import { Statistics as StatsType } from '@/types/order';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, Clock, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { BarChart3, Clock, TrendingUp, CheckCircle2, Zap } from 'lucide-react';
 
 interface StatisticsProps {
   statistics: StatsType;
@@ -12,7 +12,7 @@ export function Statistics({ statistics }: StatisticsProps) {
       title: 'Total Orders',
       value: statistics.totalOrders,
       icon: BarChart3,
-      description: 'All orders received',
+      description: `${statistics.cancelledOrders > 0 ? `${statistics.cancelledOrders} cancelled` : 'All orders received'}`,
       gradient: 'from-primary/20 to-primary/5',
       iconBg: 'bg-primary/20',
       iconColor: 'text-primary',
@@ -34,7 +34,7 @@ export function Statistics({ statistics }: StatisticsProps) {
       title: 'Avg Wait Time',
       value: `${statistics.averageWaitingTime.toFixed(1)}m`,
       icon: Clock,
-      description: 'Time before cooking',
+      description: 'Time in queue before cooking',
       gradient: 'from-yellow-500/20 to-yellow-500/5',
       iconBg: 'bg-yellow-500/20',
       iconColor: 'text-yellow-500',
@@ -42,10 +42,10 @@ export function Statistics({ statistics }: StatisticsProps) {
       glowClass: 'hover:glow-warning',
     },
     {
-      title: 'Avg Turnaround',
-      value: `${statistics.averageTurnaroundTime.toFixed(1)}m`,
-      icon: TrendingUp,
-      description: 'Total time per order',
+      title: 'Throughput',
+      value: statistics.throughput > 0 ? `${statistics.throughput.toFixed(1)}/hr` : '—',
+      icon: Zap,
+      description: 'Completed orders per hour',
       gradient: 'from-blue-500/20 to-blue-500/5',
       iconBg: 'bg-blue-500/20',
       iconColor: 'text-blue-500',

@@ -2,7 +2,7 @@ import { Order } from '@/types/order';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ChefHat, Clock, User } from 'lucide-react';
+import { ChefHat, Clock, User, Hash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface ActiveOrdersProps {
@@ -69,6 +69,11 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span className="font-semibold">{order.customerName}</span>
+                    {order.tableNumber && (
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Hash className="h-3 w-3" />{order.tableNumber}
+                      </span>
+                    )}
                     <Badge 
                       variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
                       className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}

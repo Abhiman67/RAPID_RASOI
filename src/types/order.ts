@@ -1,10 +1,12 @@
-export type OrderStatus = 'waiting' | 'cooking' | 'completed';
+export type OrderStatus = 'waiting' | 'cooking' | 'completed' | 'cancelled';
 
 export type OrderType = 'walk-in' | 'reservation';
 
 export interface Order {
   id: string;
+  orderNumber: number; // human-readable counter e.g. #1, #2
   customerName: string;
+  tableNumber?: number; // table number for dine-in
   orderType: OrderType;
   items: string;
   arrivalTime: number; // timestamp in ms
@@ -21,6 +23,7 @@ export interface Order {
 export interface Statistics {
   totalOrders: number;
   completedOrders: number;
+  cancelledOrders: number;
   averageWaitingTime: number;
   averageTurnaroundTime: number;
   throughput: number; // orders per hour

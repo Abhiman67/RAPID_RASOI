@@ -1,14 +1,16 @@
 import { Order } from '@/types/order';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, User, TrendingUp, Hash, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface OrderQueueProps {
   orders: Order[];
+  onCancelOrder: (id: string) => void;
 }
 
-export function OrderQueue({ orders }: OrderQueueProps) {
+export function OrderQueue({ orders, onCancelOrder }: OrderQueueProps) {
   const sortedOrders = [...orders].sort((a, b) => b.priority - a.priority);
 
   return (
@@ -41,7 +43,7 @@ export function OrderQueue({ orders }: OrderQueueProps) {
               key={order.id}
               className="flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/20 text-primary font-bold text-sm">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/20 text-primary font-bold text-sm flex-shrink-0">
                 #{index + 1}
               </div>
               
@@ -49,6 +51,11 @@ export function OrderQueue({ orders }: OrderQueueProps) {
                 <div className="flex items-center gap-2 mb-1">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <span className="font-semibold truncate">{order.customerName}</span>
+                  {order.tableNumber && (
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Hash className="h-3 w-3" />{order.tableNumber}
+                    </span>
+                  )}
                   <Badge 
                     variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
                     className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}
@@ -65,11 +72,22 @@ export function OrderQueue({ orders }: OrderQueueProps) {
                 </div>
               </div>
 
-              <div className="text-right">
-                <div className="text-xs text-muted-foreground mb-1">Priority</div>
-                <div className="text-xl font-bold text-primary">
-                  {order.priority.toFixed(2)}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-xs text-muted-foreground mb-1">Priority</div>
+                  <div className="text-xl font-bold text-primary">
+                    {order.priority.toFixed(2)}
+                  </div>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                  onClick={() => onCancelOrder(order.id)}
+                  title="Cancel order"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           ))

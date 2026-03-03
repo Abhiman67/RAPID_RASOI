@@ -1,7 +1,7 @@
 import { Order } from '@/types/order';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Clock, User, Timer } from 'lucide-react';
+import { CheckCircle2, Clock, User, Timer, Hash } from 'lucide-react';
 import { calculateTurnaroundTime, calculateWaitingTime } from '@/utils/scheduler';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -49,6 +49,11 @@ export function CompletedOrders({ orders }: CompletedOrdersProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span className="font-semibold">{order.customerName}</span>
+                    {order.tableNumber && (
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Hash className="h-3 w-3" />{order.tableNumber}
+                      </span>
+                    )}
                     <Badge 
                       variant={order.orderType === 'reservation' ? 'default' : 'secondary'}
                       className={order.orderType === 'reservation' ? 'bg-primary/20 text-primary border-primary/30' : ''}

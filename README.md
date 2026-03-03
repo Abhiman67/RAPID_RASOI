@@ -71,8 +71,8 @@ Open [http://localhost:8080](http://localhost:8080) in your browser.
 
 ## 👨‍💻 Author
 
-**Abhiman67**
+**Made by Abhiman67**
 
 ## 📄 License
 
-This project is for educational purposes - OS Scheduling Simulation.
+Just for smaller size kitchens no offence to big fishes
