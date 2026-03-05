@@ -58,10 +58,10 @@ export function AlgorithmExplanation({ orders }: AlgorithmExplanationProps) {
           </h3>
           <Alert className="border-primary/30 bg-primary/5">
             <AlertDescription className="space-y-2">
-              <div className="font-mono text-sm bg-background/80 p-4 rounded-xl border border-border/50">
+              <div className="font-mono text-xs sm:text-sm bg-background/80 p-3 sm:p-4 rounded-xl border border-border/50 break-words">
                 <span className="text-primary font-bold">Priority</span> = (0.5 × <span className="text-blue-400">Arrival</span>) + (0.3 × <span className="text-green-400">Reservation</span>) + (0.2 × <span className="text-yellow-400">Burst</span>)
               </div>
-              <div className="grid md:grid-cols-3 gap-3 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
                 <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                   <div className="font-semibold text-sm text-blue-400">Arrival Factor (50%)</div>
                   <div className="text-xs text-muted-foreground mt-1">
@@ -88,7 +88,7 @@ export function AlgorithmExplanation({ orders }: AlgorithmExplanationProps) {
         {/* Reservation vs Walk-in */}
         <div className="space-y-3">
           <h3 className="font-semibold text-lg">Reservation vs Walk-in</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 rounded-xl border border-primary/30 bg-primary/5">
               <div className="flex items-center gap-2 mb-3">
                 <Badge className="bg-primary/20 text-primary border-primary/30">Reservation</Badge>
@@ -156,8 +156,8 @@ export function AlgorithmExplanation({ orders }: AlgorithmExplanationProps) {
                         : 'bg-muted/30 border-border/50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+                      <div className="flex flex-wrap items-center gap-2">
                         {index === 0 && (
                           <Badge className="bg-green-500 text-white border-green-500">
                             NEXT TO COOK
@@ -171,12 +171,12 @@ export function AlgorithmExplanation({ orders }: AlgorithmExplanationProps) {
                           {order.orderType}
                         </Badge>
                       </div>
-                      <div className="text-xl font-bold text-primary">
+                      <div className="text-base font-bold text-primary">
                         Priority: {order.priority.toFixed(2)}
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                       <div className="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20">
                         <div className="text-blue-400 font-medium">Arrival (50%)</div>
                         <div className="font-bold text-foreground mt-1">

@@ -219,12 +219,14 @@ const Index = () => {
                 {isSchedulerRunning ? (
                   <>
                     <Pause className="h-5 w-5" />
-                    Pause Scheduler
+                    <span className="hidden sm:inline">Pause Scheduler</span>
+                    <span className="sm:hidden">Pause</span>
                   </>
                 ) : (
                   <>
                     <Play className="h-5 w-5" />
-                    Start Scheduler
+                    <span className="hidden sm:inline">Start Scheduler</span>
+                    <span className="sm:hidden">Start</span>
                   </>
                 )}
               </Button>
@@ -235,16 +237,15 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="border-b border-border/50 bg-gradient-to-b from-primary/5 to-transparent">
-        <div className="container mx-auto px-4 py-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-            <span>Operating System Scheduling Simulation</span>
+        <div className="container mx-auto px-4 py-6 md:py-12 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-medium mb-4 md:mb-6">
+            <span>OS Scheduling Simulation</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 md:mb-4">
             Smart Restaurant <span className="gradient-text">Order Management</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Experience how operating system scheduling algorithms optimize kitchen workflows. 
-            Watch priorities adapt in real-time based on waiting time, order type, and prep duration.
+          <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">
+            Priority scheduling for your kitchen — reservations and waiting time handled automatically.
           </p>
         </div>
       </section>

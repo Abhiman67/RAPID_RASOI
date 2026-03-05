@@ -50,6 +50,10 @@ npm run dev
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
 
+## 🌐 Live Demo
+
+**[https://abhiman67.github.io/RAPID_RASOI/](https://abhiman67.github.io/RAPID_RASOI/)**
+
 ## 🛠️ Tech Stack
 
 - **React 18** - UI Framework

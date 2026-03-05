@@ -72,10 +72,10 @@ export function OrderQueue({ orders, onCancelOrder }: OrderQueueProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <div className="text-right">
                   <div className="text-xs text-muted-foreground mb-1">Priority</div>
-                  <div className="text-xl font-bold text-primary">
+                  <div className="text-base sm:text-xl font-bold text-primary">
                     {order.priority.toFixed(2)}
                   </div>
                 </div>
