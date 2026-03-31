@@ -7,6 +7,7 @@ import { CompletedOrders } from '@/components/CompletedOrders';
 import { Statistics } from '@/components/Statistics';
 import { TimelineVisualization } from '@/components/TimelineVisualization';
 import { AlgorithmExplanation } from '@/components/AlgorithmExplanation';
+import { KitchenManagement } from '@/components/KitchenManagement';
 import { Button } from '@/components/ui/button';
 import { 
   scheduleNextOrder, 
@@ -14,11 +15,24 @@ import {
   calculateWaitingTime, 
   calculateTurnaroundTime 
 } from '@/utils/scheduler';
+import { Customer, DiningTable, TableStatus } from '@/types/kitchen';
 import { UtensilsCrossed, Play, Pause, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
 const STORAGE_KEY = 'rapid-rasoi-orders';
 const SESSION_KEY = 'rapid-rasoi-session-start';
+const CUSTOMERS_KEY = 'rapid-rasoi-customers';
+const TABLES_KEY = 'rapid-rasoi-tables';
+
+const createDefaultTables = (): DiningTable[] =>
+  Array.from({ length: 6 }, (_, index) => ({
+    id: `TABLE-${index + 1}`,
+    tableNumber: index + 1,
+    capacity: index < 3 ? 2 : 4,
+    status: 'available' as const,
+    notes: '',
+    updatedAt: Date.now(),
+  }));
 
 const Index = () => {
   const [orders, setOrders] = useState<Order[]>(() => {
@@ -27,6 +41,22 @@ const Index = () => {
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
+    }
+  });
+  const [customers, setCustomers] = useState<Customer[]>(() => {
+    try {
+      const saved = localStorage.getItem(CUSTOMERS_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [tables, setTables] = useState<DiningTable[]>(() => {
+    try {
+      const saved = localStorage.getItem(TABLES_KEY);
+      return saved ? JSON.parse(saved) : createDefaultTables();
+    } catch {
+      return createDefaultTables();
     }
   });
   const [isSchedulerRunning, setIsSchedulerRunning] = useState(false);
@@ -46,10 +76,26 @@ const Index = () => {
     } catch { /* quota exceeded */ }
   }, [orders]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+    } catch { /* quota exceeded */ }
+  }, [customers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(TABLES_KEY, JSON.stringify(tables));
+    } catch { /* quota exceeded */ }
+  }, [tables]);
+
   const waitingOrders = orders.filter(o => o.status === 'waiting');
   const cookingOrders = orders.filter(o => o.status === 'cooking');
   const completedOrders = orders.filter(o => o.status === 'completed');
   const cancelledOrders = orders.filter(o => o.status === 'cancelled');
+  const availableTableNumbers = tables
+    .filter(table => table.status === 'available')
+    .map(table => table.tableNumber)
+    .sort((a, b) => a - b);
 
   // Next order number = highest orderNumber so far + 1
   const nextOrderNumber = orders.length > 0
@@ -79,6 +125,36 @@ const Index = () => {
   // Add new order
   const handleAddOrder = useCallback((order: Order) => {
     setOrders(prev => [...prev, order]);
+    setCustomers(prev => {
+      const normalizedName = order.customerName.trim().toLowerCase();
+      if (!normalizedName) return prev;
+
+      const existingCustomer = prev.find(customer => customer.name.trim().toLowerCase() === normalizedName);
+      if (existingCustomer) {
+        return prev.map(customer =>
+          customer.id === existingCustomer.id
+            ? {
+                ...customer,
+                lastVisitAt: order.arrivalTime,
+                visitCount: customer.visitCount + 1,
+              }
+            : customer
+        );
+      }
+
+      return [
+        ...prev,
+        {
+          id: `CUS-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          name: order.customerName.trim(),
+          phone: '',
+          notes: '',
+          createdAt: order.arrivalTime,
+          lastVisitAt: order.arrivalTime,
+          visitCount: 1,
+        },
+      ];
+    });
   }, []);
 
   // Cancel a waiting order
@@ -90,6 +166,206 @@ const Index = () => {
     ));
     toast.warning('Order cancelled');
   }, []);
+
+  const handleFinishOrderEarly = useCallback((id: string) => {
+    const completionTime = Date.now();
+    let finishedOrder: Order | null = null;
+
+    setOrders(prev => prev.map(order => {
+      if (order.id !== id || order.status !== 'cooking') {
+        return order;
+      }
+
+      finishedOrder = order;
+      const resolvedOrder = {
+        ...order,
+        status: 'completed' as const,
+        completionTime,
+        waitingTime: calculateWaitingTime(order),
+        turnaroundTime: calculateTurnaroundTime({ ...order, completionTime }),
+      };
+
+      return resolvedOrder;
+    }));
+
+    if (!finishedOrder) {
+      toast.error('Only active cooking orders can be finished early');
+      return;
+    }
+
+    toast.success(`✅ Order #${finishedOrder.orderNumber} finished early — ${finishedOrder.customerName}`);
+  }, []);
+
+  const handleSaveCustomer = useCallback((customerData: { id?: string; name: string; phone: string; notes: string }) => {
+    const now = Date.now();
+    setCustomers(prev => {
+      if (customerData.id) {
+        return prev.map(customer =>
+          customer.id === customerData.id
+            ? {
+                ...customer,
+                name: customerData.name,
+                phone: customerData.phone,
+                notes: customerData.notes,
+              }
+            : customer
+        );
+      }
+
+      return [
+        ...prev,
+        {
+          id: `CUS-${now}-${Math.random().toString(36).slice(2, 8)}`,
+          name: customerData.name,
+          phone: customerData.phone,
+          notes: customerData.notes,
+          createdAt: now,
+          visitCount: 0,
+        },
+      ];
+    });
+  }, []);
+
+  const handleDeleteCustomer = useCallback((id: string) => {
+    setCustomers(prev => prev.filter(customer => customer.id !== id));
+  }, []);
+
+  const handleSaveTable = useCallback((tableData: { id?: string; tableNumber: number; capacity: number; status: TableStatus; notes: string }) => {
+    const now = Date.now();
+    const duplicateTable = tables.find(table => table.tableNumber === tableData.tableNumber && table.id !== tableData.id);
+    if (duplicateTable) {
+      toast.error(`Table ${tableData.tableNumber} already exists`);
+      return;
+    }
+
+    setTables(prev => {
+      if (tableData.id) {
+        return prev.map(table =>
+          table.id === tableData.id
+            ? {
+                ...table,
+                tableNumber: tableData.tableNumber,
+                capacity: tableData.capacity,
+                status: tableData.status,
+                notes: tableData.notes,
+                updatedAt: now,
+              }
+            : table
+        );
+      }
+
+      return [
+        ...prev,
+        {
+          id: `TABLE-${now}-${Math.random().toString(36).slice(2, 8)}`,
+          tableNumber: tableData.tableNumber,
+          capacity: tableData.capacity,
+          status: tableData.status,
+          notes: tableData.notes,
+          updatedAt: now,
+        },
+      ];
+    });
+  }, [tables]);
+
+  const handleDeleteTable = useCallback((id: string) => {
+    const table = tables.find(item => item.id === id);
+    if (!table) return;
+
+    const activeOrder = orders.find(order =>
+      order.tableNumber === table.tableNumber &&
+      (order.status === 'waiting' || order.status === 'cooking')
+    );
+
+    if (activeOrder) {
+      toast.error(`Table ${table.tableNumber} is in use and cannot be deleted`);
+      return;
+    }
+
+    setTables(prev => prev.filter(table => table.id !== id));
+  }, [orders, tables]);
+
+  const handleSetTableStatus = useCallback((id: string, status: TableStatus) => {
+    setTables(prev => prev.map(table =>
+      table.id === id
+        ? { ...table, status, updatedAt: Date.now() }
+        : table
+    ));
+  }, []);
+
+  const handleReleaseTable = useCallback((id: string) => {
+    const table = tables.find(item => item.id === id);
+    if (!table) return;
+
+    const activeOrder = orders.find(order =>
+      order.tableNumber === table.tableNumber &&
+      (order.status === 'waiting' || order.status === 'cooking')
+    );
+
+    if (activeOrder) {
+      toast.error(`Table ${table.tableNumber} is currently assigned to an active order`);
+      return;
+    }
+
+    setTables(prev => prev.map(table =>
+      table.id === id
+        ? {
+            ...table,
+            status: 'available' as const,
+            assignedOrderId: undefined,
+            assignedCustomerName: undefined,
+            updatedAt: Date.now(),
+          }
+        : table
+    ));
+  }, [orders, tables]);
+
+  useEffect(() => {
+    setTables(prevTables => {
+      let didChange = false;
+      const nextTables = prevTables.map(table => {
+        const activeOrder = orders.find(order =>
+          order.tableNumber != null &&
+          order.tableNumber === table.tableNumber &&
+          (order.status === 'waiting' || order.status === 'cooking')
+        );
+
+        if (activeOrder) {
+          if (
+            table.status === 'occupied' &&
+            table.assignedOrderId === activeOrder.id &&
+            table.assignedCustomerName === activeOrder.customerName
+          ) {
+            return table;
+          }
+
+          didChange = true;
+          return {
+            ...table,
+            status: 'occupied' as const,
+            assignedOrderId: activeOrder.id,
+            assignedCustomerName: activeOrder.customerName,
+            updatedAt: Date.now(),
+          };
+        }
+
+        if (table.status === 'occupied' || table.assignedOrderId || table.assignedCustomerName) {
+          didChange = true;
+          return {
+            ...table,
+            status: table.status === 'occupied' ? 'available' : table.status,
+            assignedOrderId: undefined,
+            assignedCustomerName: undefined,
+            updatedAt: Date.now(),
+          };
+        }
+
+        return table;
+      });
+
+      return didChange ? nextTables : prevTables;
+    });
+  }, [orders]);
 
   // Reset / end-of-day
   const handleReset = () => {
@@ -257,13 +533,17 @@ const Index = () => {
 
         {/* Order Entry and Queue */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <OrderEntry onAddOrder={handleAddOrder} nextOrderNumber={nextOrderNumber} />
+          <OrderEntry
+            onAddOrder={handleAddOrder}
+            nextOrderNumber={nextOrderNumber}
+            availableTables={availableTableNumbers}
+          />
           <OrderQueue orders={waitingOrders} onCancelOrder={handleCancelOrder} />
         </div>
 
         {/* Active and Completed Orders */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <ActiveOrders orders={cookingOrders} />
+          <ActiveOrders orders={cookingOrders} onFinishOrder={handleFinishOrderEarly} />
           <CompletedOrders orders={completedOrders} />
         </div>
 
@@ -272,6 +552,19 @@ const Index = () => {
 
         {/* Algorithm Explanation */}
         <AlgorithmExplanation orders={orders} />
+
+        {/* Customer and Table Management */}
+        <KitchenManagement
+          customers={customers}
+          tables={tables}
+          orders={orders}
+          onSaveCustomer={handleSaveCustomer}
+          onDeleteCustomer={handleDeleteCustomer}
+          onSaveTable={handleSaveTable}
+          onDeleteTable={handleDeleteTable}
+          onSetTableStatus={handleSetTableStatus}
+          onReleaseTable={handleReleaseTable}
+        />
       </main>
 
       {/* Footer */}

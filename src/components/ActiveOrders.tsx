@@ -2,15 +2,28 @@ import { Order } from '@/types/order';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ChefHat, Clock, User, Hash } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { ChefHat, Clock, User, Hash, Sparkles, TimerReset } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface ActiveOrdersProps {
   orders: Order[];
+  onFinishOrder: (id: string) => void;
 }
 
-export function ActiveOrders({ orders }: ActiveOrdersProps) {
+export function ActiveOrders({ orders, onFinishOrder }: ActiveOrdersProps) {
   const [, setTick] = useState(0);
+  const [finishTargetId, setFinishTargetId] = useState<string | null>(null);
 
   // Update progress every second
   useEffect(() => {
@@ -34,6 +47,17 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
     return `${Math.ceil(remaining)}min`;
   };
 
+  const finishTarget = useMemo(
+    () => orders.find(order => order.id === finishTargetId) || null,
+    [finishTargetId, orders]
+  );
+
+  const handleFinishNow = () => {
+    if (!finishTarget) return;
+    onFinishOrder(finishTarget.id);
+    setFinishTargetId(null);
+  };
+
   return (
     <Card className="border-border/50 card-hover">
       <CardHeader>
@@ -51,6 +75,48 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <AlertDialog open={!!finishTarget} onOpenChange={(open) => !open && setFinishTargetId(null)}>
+          <AlertDialogContent className="border-border/50 bg-card/95 backdrop-blur-xl sm:max-w-lg">
+            <AlertDialogHeader>
+              <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-500">
+                <Sparkles className="h-3.5 w-3.5" />
+                Finish early
+              </div>
+              <AlertDialogTitle className="text-xl">
+                Mark order #{finishTarget?.orderNumber} as completed now?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm leading-6">
+                This will complete the active order immediately, update its waiting and turnaround time, and free the kitchen slot for the next order.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            {finishTarget && (
+              <div className="grid gap-3 rounded-2xl border border-border/60 bg-background/60 p-4 sm:grid-cols-2">
+                <div className="rounded-xl bg-muted/40 p-3">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Customer</div>
+                  <div className="mt-1 text-lg font-semibold">{finishTarget.customerName}</div>
+                  <div className="text-sm text-muted-foreground">{finishTarget.items}</div>
+                </div>
+                <div className="rounded-xl bg-muted/40 p-3">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Remaining time</div>
+                  <div className="mt-1 text-lg font-semibold flex items-center gap-2">
+                    <TimerReset className="h-4 w-4 text-yellow-500" />
+                    {getRemainingTime(finishTarget)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Manual completion overrides the timer</div>
+                </div>
+              </div>
+            )}
+
+            <AlertDialogFooter className="mt-2">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction className="bg-yellow-500 text-black hover:bg-yellow-500/90" onClick={handleFinishNow}>
+                Finish now
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         {orders.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
@@ -100,6 +166,19 @@ export function ActiveOrders({ orders }: ActiveOrdersProps) {
                   <span className="text-yellow-500 font-medium">{Math.round(calculateProgress(order))}%</span>
                 </div>
                 <Progress value={calculateProgress(order)} className="h-2" />
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-500"
+                  onClick={() => setFinishTargetId(order.id)}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Finish early
+                </Button>
               </div>
             </div>
           ))

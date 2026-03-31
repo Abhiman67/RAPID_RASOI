@@ -5,6 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Order, OrderType } from '@/types/order';
 import { calculatePriority } from '@/utils/scheduler';
 import { Clock, User, UtensilsCrossed, Hash, Plus, X } from 'lucide-react';
@@ -29,6 +36,7 @@ const MENU_PRESETS: { label: string; prepTime: number }[] = [
 interface OrderEntryProps {
   onAddOrder: (order: Order) => void;
   nextOrderNumber: number;
+  availableTables: number[];
 }
 
 interface FormData {
@@ -43,10 +51,12 @@ function OrderForm({
   orderType,
   onSubmit,
   nextOrderNumber,
+  availableTables,
 }: {
   orderType: OrderType;
   onSubmit: (type: OrderType, data: FormData) => void;
   nextOrderNumber: number;
+  availableTables: number[];
 }) {
   const [customerName, setCustomerName] = useState('');
   const [tableNumber, setTableNumber] = useState('');
@@ -145,6 +155,24 @@ function OrderForm({
         </div>
       </div>
 
+      {availableTables.length > 0 && (
+        <div className="space-y-2">
+          <Label>Quick Table Pick</Label>
+          <Select value={tableNumber} onValueChange={setTableNumber}>
+            <SelectTrigger>
+              <SelectValue placeholder="Pick an available table" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableTables.map(number => (
+                <SelectItem key={number} value={String(number)}>
+                  Table {number}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Menu Presets */}
       <div className="space-y-2">
         <Label>Menu Items — tap to select</Label>
@@ -240,7 +268,7 @@ function OrderForm({
   );
 }
 
-export function OrderEntry({ onAddOrder, nextOrderNumber }: OrderEntryProps) {
+export function OrderEntry({ onAddOrder, nextOrderNumber, availableTables }: OrderEntryProps) {
   const handleSubmit = (orderType: OrderType, data: FormData) => {
     const currentTime = Date.now();
     let reservationTimestamp: number | undefined;
@@ -293,11 +321,21 @@ export function OrderEntry({ onAddOrder, nextOrderNumber }: OrderEntryProps) {
           </TabsList>
 
           <TabsContent value="walk-in" className="mt-4">
-            <OrderForm orderType="walk-in" onSubmit={handleSubmit} nextOrderNumber={nextOrderNumber} />
+            <OrderForm
+              orderType="walk-in"
+              onSubmit={handleSubmit}
+              nextOrderNumber={nextOrderNumber}
+              availableTables={availableTables}
+            />
           </TabsContent>
 
           <TabsContent value="reservation" className="mt-4">
-            <OrderForm orderType="reservation" onSubmit={handleSubmit} nextOrderNumber={nextOrderNumber} />
+            <OrderForm
+              orderType="reservation"
+              onSubmit={handleSubmit}
+              nextOrderNumber={nextOrderNumber}
+              availableTables={availableTables}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
